@@ -37,7 +37,7 @@ public class StudentController {
         return new ApiResponse("Student deleted successfully");
     }
 
-    @GetMapping("/honor")
+    @GetMapping("/honor") //* dont send in args the whole student object but just the id
     public ApiResponse studentHonors(@RequestBody Student student) {
         if (student.getGpa() > 4.6)
             return new ApiResponse(student.getName() + ": First Class Honor");
@@ -47,12 +47,41 @@ public class StudentController {
         return new ApiResponse(student.getName() + ": Dose Not Have Honor Class");
     }
 
-    @GetMapping("/average")
+//    // using index
+//    @GetMapping("/honor/{index}")
+//    public ApiResponse studentHonors(@PathVariable int index) {
+//        if (students.get(index).getGpa() > 4.6) {
+//            return new ApiResponse("First Class Honor");
+//        } else if (students.get(index).getGpa() > 4.3) {
+//            return new ApiResponse("Second Class Honor");
+//        }
+//
+//        return new ApiResponse("Student Dose Not Have Honor Class");
+//    }
+
+    //using id
+
+    @GetMapping("/honor/{id}")
+    public ApiResponse studentHonors(@PathVariable String id){
+        for(Student student : students){
+            if(student.getId().equals(id)){
+                if(student.getGpa() > 4.6)
+                    return new ApiResponse("First Class Honor");
+                else if(student.getAge() > 4.3)
+                    return new ApiResponse("Second Class Honor");
+            }
+        }
+        return new ApiResponse("Student ID Not Found");
+    }
+
+    @GetMapping("/average") //*outside the loop
     public ArrayList<Student> aboveAverageStudents() {
         ArrayList<Student> aboveAvg = new ArrayList<>();
-        double sum = 0;
+        double sum = 0, avg = 0;
         for (Student student : students) {
             sum += student.getGpa();
+        }
+        for (Student student : students) {
             if (student.getGpa() > sum / students.size()) {
                 aboveAvg.add(student);
             }
